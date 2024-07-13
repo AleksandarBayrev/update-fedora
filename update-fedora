@@ -1,0 +1,19 @@
+#!/bin/bash
+distro=`cat /etc/*-release | grep -i "NAME=\"Fedora"`
+if [[ -z $distro ]]
+then
+    echo "Distribution is not Fedora, exiting..."
+    exit 0
+fi
+echo 'Performing system update'
+sudo dnf update -y
+if [ -x /usr/bin/flatpak ]
+then
+    echo 'Performing flatpaks update'
+    flatpak update -y
+fi
+if [ -x /usr/sbin/akmods-shutdown ]
+then            
+    echo 'Rebuilding akmods, please wait'
+    sudo akmods-shutdown
+fi
