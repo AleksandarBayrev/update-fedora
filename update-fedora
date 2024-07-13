@@ -1,6 +1,6 @@
 #!/bin/bash
-distroCheckOne=`cat /etc/os-release | grep -i "NAME=\"Fedora"`
-distroCheckTwo=`cat /etc/fedora-release | grep -i "Fedora"`
+distroCheckOne=`cat /etc/os-release | grep -i "NAME=\"Fedora Linux\""`
+distroCheckTwo=`cat /etc/fedora-release | grep -i "Fedora release"`
 if [[ -z $distroCheckOne || -z $distroCheckTwo ]]
 then
     echo "Distribution is not Fedora, exiting..."
