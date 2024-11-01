@@ -14,7 +14,7 @@ then
     echo 'Performing flatpaks update'
     flatpak update -y
 fi
-if [ -x /usr/sbin/akmods-shutdown ]
+if [ -x /usr/sbin/akmods ]
 then            
     echo 'Rebuilding akmods, please wait'
     sudo akmods
