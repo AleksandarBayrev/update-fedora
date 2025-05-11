@@ -8,6 +8,7 @@ then
 fi
 echo 'Performing system update'
 sudo dnf clean all
+sudo dnf offline clean
 sudo dnf --refresh upgrade --offline -y
 if [ -x /usr/bin/flatpak ]
 then
