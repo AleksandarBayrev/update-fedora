@@ -8,7 +8,7 @@ then
 fi
 echo 'Performing system update'
 sudo dnf clean all
-sudo dnf --refresh upgrade -y
+sudo dnf --refresh upgrade --offline -y
 if [ -x /usr/bin/flatpak ]
 then
     echo 'Performing flatpaks update'
@@ -19,3 +19,4 @@ then
     echo 'Rebuilding akmods, please wait'
     sudo akmods
 fi
+sudo dnf offline reboot
