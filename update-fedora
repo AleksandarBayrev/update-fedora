@@ -1,23 +1,31 @@
 #!/bin/bash
+# Script to update Fedora systems
+
+# Distribution checks
 distroCheckOne=`cat /etc/os-release | grep -i "NAME=\"Fedora Linux\""`
 distroCheckTwo=`cat /etc/fedora-release | grep -i "Fedora release"`
+
 if [[ -z $distroCheckOne || -z $distroCheckTwo ]]
 then
     echo "Distribution is not Fedora, exiting..."
     exit 0
 fi
+
 echo 'Performing system update'
 sudo dnf clean all
 sudo dnf offline clean
 sudo dnf --refresh upgrade --offline -y
-if [ -x /usr/bin/flatpak ]
+
+if command -v flatpak &> /dev/null
 then
     echo 'Performing flatpaks update'
     flatpak update -y
 fi
-if [ -x /usr/sbin/akmods ]
+
+if command -v akmods &> /dev/null
 then            
     echo 'Rebuilding akmods, please wait'
     sudo akmods
 fi
+
 sudo dnf offline reboot
