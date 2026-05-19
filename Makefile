@@ -1,5 +1,5 @@
-SCRIPT_SRC = update-debian
-SCRIPT_NAME = update-debian
+SCRIPT_SRC = update-fedora
+SCRIPT_NAME = update-fedora
 INSTALL_DIR = /usr/bin
 PROJECT_NAME = $(SCRIPT_NAME)
 VERSION := $(shell date +%Y%m%d)
