@@ -22,7 +22,8 @@ echo 'Performing system update'
 
 dnf clean all
 dnf offline clean
-dnf --refresh offline-upgrade -y
+dnf offline-upgrade clean
+dnf offline-upgrade download -y --refresh
 
 if command -v flatpak &> /dev/null
 then
