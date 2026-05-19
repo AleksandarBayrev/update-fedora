@@ -35,7 +35,14 @@ then
     echo 'Rebuilding akmods, please wait'
     akmods
 fi
+
+if ! command -v needs-restarting &> /dev/null; then
+    echo "Warning: needs-restarting not found. Installing dnf-utils..."
+    dnf install -y dnf-utils
+fi
+
 echo "--- Checking if reboot is required ---"
+
 if needs-restarting -r > /dev/null; then
     echo "System is up to date. No reboot required."
 else
