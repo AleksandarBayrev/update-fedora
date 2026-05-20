@@ -42,11 +42,4 @@ if ! command -v needs-restarting &> /dev/null; then
     dnf install -y dnf-utils
 fi
 
-echo "--- Checking if reboot is required ---"
-
-if needs-restarting -r > /dev/null; then
-    echo "System is up to date. No reboot required."
-else
-    echo "Reboot required to complete updates."
-    dnf offline reboot
-fi
+dnf offline reboot
