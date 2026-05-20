@@ -32,7 +32,7 @@ then
 fi
 
 if command -v akmods &> /dev/null
-then            
+then
     echo 'Rebuilding akmods, please wait'
     akmods --force
 fi
