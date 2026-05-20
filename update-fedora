@@ -34,7 +34,7 @@ fi
 if command -v akmods &> /dev/null
 then            
     echo 'Rebuilding akmods, please wait'
-    akmods
+    akmods --force
 fi
 
 dnf offline reboot
