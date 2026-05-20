@@ -37,9 +37,4 @@ then
     akmods
 fi
 
-if ! command -v needs-restarting &> /dev/null; then
-    echo "Warning: needs-restarting not found. Installing dnf-utils..."
-    dnf install -y dnf-utils
-fi
-
 dnf offline reboot
