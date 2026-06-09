@@ -1,34 +1,61 @@
 #!/bin/bash
-# Script to update Fedora systems
+# Script to update Fedora systems (Standard and rpm-ostree variants)
 # Ensure the script is run with root privileges
 
-if [ "$(id -u)" != "0" ];
-then
+if [ "$(id -u)" != "0" ]; then
    echo "This script must be run as root. Try 'sudo update-fedora'" 1>&2
    exit 1
 fi
 
 # Distribution checks
-distroCheckOne=`cat /etc/os-release | grep -i "NAME=\"Fedora Linux\""`
-distroCheckTwo=`cat /etc/fedora-release | grep -i "Fedora release"`
-
-if [[ -z $distroCheckOne || -z $distroCheckTwo ]]
-then
+if ! grep -iq "NAME=\"Fedora Linux\"" /etc/os-release || ! grep -iq "Fedora release" /etc/fedora-release; then
     echo "Distribution is not Fedora, exiting..."
     exit 0
 fi
 
-echo 'Performing system update'
+# Determine system type (Standard DNF vs rpm-ostree)
+if [ -d /run/ostree-booted ]; then
+    IS_OSTREE=true
+else
+    IS_OSTREE=false
+fi
 
-dnf clean all
-dnf offline clean
-dnf offline-upgrade clean
-dnf offline-upgrade download -y --refresh
+# Perform base system update
+if [ "$IS_OSTREE" = true ]; then
+    echo "Detected rpm-ostree based system (e.g., Silverblue, Kinoite, CoreOS)."
+    echo "Performing system update via rpm-ostree..."
+    rpm-ostree upgrade
+else
+    echo "Detected standard DNF based system."
+    echo "Performing system update via dnf offline-upgrade..."
+    dnf clean all
+    # Clean commands specific to system-upgrade/offline-upgrade plugins
+    if dnf offline-upgrade --help >/dev/null 2>&1; then
+        dnf offline-upgrade clean
+    fi
+    dnf offline-upgrade download -y --refresh
+fi
 
-if command -v flatpak &> /dev/null
-then
-    echo 'Performing flatpaks update'
+# Perform flatpak updates if installed
+if command -v flatpak &> /dev/null; then
+    echo "Performing flatpak updates..."
     flatpak update -y
 fi
 
-dnf offline reboot
+# Handle rebooting
+echo ""
+echo "System and application updates staged."
+read -r -p "Do you want to reboot now to apply updates? [y/N] " response
+
+# Check if the user entered y or Y
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if [ "$IS_OSTREE" = true ]; then
+        echo "Rebooting to apply rpm-ostree deployment..."
+        systemctl reboot
+    else
+        echo "Rebooting to apply offline DNF updates..."
+        dnf offline-upgrade reboot
+    fi
+else
+    echo "Reboot skipped. Remember to reboot later to apply the updates!"
+fi

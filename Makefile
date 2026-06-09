@@ -1,11 +1,17 @@
 SCRIPT_SRC = update-fedora
 SCRIPT_NAME = update-fedora
-INSTALL_DIR = /usr/bin
 PROJECT_NAME = $(SCRIPT_NAME)
 VERSION := $(shell date +%Y%m%d)
 RELEASE_ARCHIVE = $(PROJECT_NAME)-$(VERSION).tar.gz
 
-.PHONY: install uninstall
+# Detect if the system is rpm-ostree based (immutable)
+ifeq ($(wildcard /run/ostree-booted),)
+    INSTALL_DIR = /usr/bin
+else
+    INSTALL_DIR = /usr/local/bin
+endif
+
+.PHONY: install uninstall release clean make
 
 make:
 	@echo "Available commands:\ninstall\nuninstall\nrelease\nclean"
@@ -17,7 +23,10 @@ install:
 		exit 1; \
 	fi
 	
+	@echo "Detected target directory: $(INSTALL_DIR)"
 	@echo "Installing $(SCRIPT_SRC) to $(INSTALL_DIR)/$(SCRIPT_NAME)..."
+	@# Ensure the directory exists (important if /usr/local/bin isn't fully populated)
+	@mkdir -p $(INSTALL_DIR)
 	@# Install the script and set permissions to executable (755)
 	@install -m 755 $(SCRIPT_SRC) $(INSTALL_DIR)/$(SCRIPT_NAME)
 	@echo "Install complete."
