@@ -31,7 +31,7 @@ if ! grep -iq "NAME=\"Fedora Linux\"" /etc/os-release || ! grep -iq "Fedora rele
     exit 0
 fi
 
-if [ -d /run/ostree-booted ]; then
+if [ -f /run/ostree-booted ]; then
     IS_OSTREE=true
 else
     IS_OSTREE=false
